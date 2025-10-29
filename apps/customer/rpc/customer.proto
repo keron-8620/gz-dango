@@ -1,0 +1,432 @@
+syntax = "proto3"; // 指定proto版本
+
+package customer; // 默认包名
+
+option go_package = "./rpc/pb"; // 指定go包名
+
+// 编译命令
+// protoc --go-grpc_out=require_unimplemented_servers=false:. --go_out=. ./user.proto
+
+message UInt32Value {
+  // The uint32 value.
+  uint32 value = 1;
+}
+
+message BoolValue {
+  bool value = 1;
+}
+
+message NilOut {}
+
+service Permission {
+	rpc CreatePermission (CreatePermissionRequest) returns (PermissionOutBase);
+	rpc UpdatePermission (UpdatePermissionRequest) returns (PermissionOutBase);
+	rpc DeletePermission (DeletePermissionRequest) returns (NilOut);
+	rpc GetPermission (GetPermissionRequest) returns (PermissionOutBase);
+	rpc ListPermission (ListPermissionRequest) returns (PagPermissionOutBase);
+}
+
+message CreatePermissionRequest {
+	uint32 id = 1;
+	string url = 2;
+	string method = 3;
+	string label = 4; 
+	string descr = 5;
+}
+
+message UpdatePermissionRequest {
+	uint32 pk = 1;
+	string url = 2;
+	string method = 3;
+	string label = 4; 
+	string descr = 5;
+}
+
+message GetPermissionRequest {
+	uint32 pk = 1;
+}
+
+message DeletePermissionRequest {
+	uint32 pk = 1;
+}
+
+message ListPermissionRequest {
+	int64 page = 1;
+	int64 size = 2;
+	uint32 pk = 3;
+	string pks = 4;
+	string before_created_at = 5;
+	string after_created_at = 6;
+	string before_updated_at = 7;
+	string after_updated_at = 8;
+	string url = 9;
+	string method = 10;
+	string label = 11;
+	string descr = 12;
+}
+
+message PermissionOutBase {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string url = 4;
+	string method = 5;
+	string label = 6;
+	string descr = 7;
+}
+
+message PagPermissionOutBase {
+	int64 page = 1;
+	int64 size = 2;
+	int64 total = 3;
+	int64 pages = 4;
+	repeated PermissionOutBase items = 5;
+}
+
+service Menu {
+	rpc CreateMenu (CreateMenuRequest) returns (MenuOut);
+	rpc UpdateMenu (UpdateMenuRequest) returns (MenuOut);
+	rpc DeleteMenu (DeleteMenuRequest) returns (NilOut);
+	rpc GetMenu (GetMenuRequest) returns (MenuOut);
+	rpc ListMenu (ListMenuRequest) returns (PagMenuOutBase);
+}
+
+message CreateMenuRequest {
+	uint32 id = 1;
+	string path = 2;
+	string component = 3;
+	string name = 4;
+	MetaSchemas meta = 5;
+	string label = 6;
+	uint32 arrange_order = 7;
+	bool is_active = 8;
+	string descr = 9;
+	uint32 parent_id = 10;
+	repeated uint32 permission_ids = 11;
+}
+
+message UpdateMenuRequest {
+	uint32 pk = 1;
+	string path = 2;
+	string component = 3;
+	string name = 4;
+	MetaSchemas meta = 5;
+	string label = 6;
+	uint32 arrange_order = 7;
+	bool is_active = 8;
+	string descr = 9;
+	uint32 parent_id = 10;
+	repeated uint32 permission_ids = 11;
+}
+
+message DeleteMenuRequest {
+	uint32 pk = 1;
+}
+
+message GetMenuRequest {
+	uint32 pk = 1;
+}
+
+message ListMenuRequest {
+	int64 page = 1;
+	int64 size = 2;
+	uint32 pk = 3;
+	string pks = 4;
+	string before_created_at = 5;
+	string after_created_at = 6;
+	string before_updated_at = 7;
+	string after_updated_at = 8;
+	string path = 9;
+	string component = 10;
+	string name = 11;
+	string label = 12;
+	BoolValue is_active = 13;
+	string descr = 14;
+	UInt32Value parent_id = 15;
+}
+
+message MetaSchemas {
+	string title = 1;
+	string icon = 2;
+}
+
+message MenuOutBase {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string path = 4;
+	string component = 5;
+	string name = 6;
+	MetaSchemas meta = 7;
+	string label = 8;
+	uint32 arrange_order = 9;
+	bool is_active = 10;
+	string descr = 11;
+}
+
+message MenuOut {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string path = 4;
+	string component = 5;
+	string name = 6;
+	MetaSchemas meta = 7;
+	string label = 8;
+	uint32 arrange_order = 9;
+	bool is_active = 10;
+	string descr = 11;
+	MenuOutBase parent = 12;
+	repeated PermissionOutBase permissions = 13;
+}
+
+message PagMenuOutBase {
+	int64 page = 1;
+	int64 size = 2;
+	int64 total = 3;
+	int64 pages = 4;
+	repeated MenuOutBase items = 5;
+}
+
+service Button {
+	rpc CreateButton (CreateButtonRequest) returns (ButtonOut);
+	rpc UpdateButton (UpdateButtonRequest) returns (ButtonOut);
+	rpc DeleteButton (DeleteButtonRequest) returns (NilOut);
+	rpc GetButton (GetButtonRequest) returns (ButtonOut);
+	rpc ListButton (ListButtonRequest) returns (PagButtonOutBase);
+}
+
+message CreateButtonRequest {
+	uint32 id = 1;
+	string name = 2;
+	uint32 arrange_order = 3;
+	bool is_active = 4;
+	string descr = 5;
+	uint32 menu_id = 6;
+	repeated uint32 permission_ids = 7;
+}
+
+message UpdateButtonRequest {
+	uint32 pk = 1;
+	string name = 2;
+	uint32 arrange_order = 3;
+	bool is_active = 4;
+	string descr = 5;
+	uint32 menu_id = 6;
+	repeated uint32 permission_ids = 7;
+}
+
+message DeleteButtonRequest {
+	uint32 pk = 1;
+}
+
+message GetButtonRequest {
+	uint32 pk = 1;
+}
+
+message ListButtonRequest {
+	int64 page = 1;
+	int64 size = 2;
+	uint32 pk = 3;
+	string pks = 4;
+	string before_created_at = 5;
+	string after_created_at = 6;
+	string before_updated_at = 7;
+	string after_updated_at = 8;
+	string name = 9;
+	BoolValue is_active = 10;
+	string descr = 11;
+	uint32 menu_id = 12;
+}
+
+message ButtonOutBase {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string name = 4;
+	uint32 arrange_order = 5;
+	bool is_active = 6;
+	string descr = 7;
+}
+
+message ButtonOut {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string name = 4;
+	uint32 arrange_order = 5;
+	bool is_active = 6;
+	string descr = 7;
+	MenuOutBase menu = 8;
+	repeated PermissionOutBase permissions = 9;
+}
+
+message PagButtonOutBase {
+	int64 page = 1;
+	int64 size = 2;
+	int64 total = 3;
+	int64 pages = 4;
+	repeated ButtonOutBase items = 5;
+}
+
+service Role {
+	rpc CreateRole (CreateRoleRequest) returns (RoleOut);
+	rpc UpdateRole (UpdateRoleRequest) returns (RoleOut);
+	rpc DeleteRole (DeleteRoleRequest) returns (NilOut);
+	rpc GetRole (GetRoleRequest) returns (RoleOut);
+	rpc ListRole (ListRoleRequest) returns (PagRoleOutBase);
+}
+
+message CreateRoleRequest {
+	string name = 1;
+	string descr = 2;
+	repeated uint32 permission_ids = 3;
+	repeated uint32 menu_ids = 4;
+	repeated uint32 button_ids = 5;
+}
+
+message UpdateRoleRequest {
+	string name = 1;
+	string descr = 2;
+	repeated uint32 permission_ids = 3;
+	repeated uint32 menu_ids = 4;
+	repeated uint32 button_ids = 5;
+	uint32 pk = 6;
+}
+
+message DeleteRoleRequest {
+	uint32 pk = 1;
+}
+
+message GetRoleRequest {
+	uint32 pk = 1;
+}
+
+message ListRoleRequest {
+	int64 page = 1;
+	int64 size = 2;
+	uint32 pk = 3;
+	string pks = 4;
+	string before_created_at = 5;
+	string after_created_at = 6;
+	string before_updated_at = 7;
+	string after_updated_at = 8;
+	string name = 9;
+	string descr = 10;
+}
+
+message RoleOutBase {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string name = 4;
+	string descr = 5;
+}
+
+message RoleOut {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string name = 4;
+	string descr = 5;
+	repeated PermissionOutBase permissions = 6;
+	repeated MenuOutBase menus = 7;
+	repeated ButtonOutBase buttons = 8;
+}
+
+message PagRoleOutBase {
+	int64 page = 1;
+	int64 size = 2;
+	int64 total = 3;
+	int64 pages = 4;
+	repeated RoleOutBase items = 5;
+}
+
+service User {
+	rpc CreateUser (CreateUserRequest) returns (UserOut);
+	rpc UpdateCustomer (UpdateUserRequest) returns (UserOut);
+	rpc DeleteCustomer (DeleteUserRequest) returns (NilOut);
+	rpc GetCustomer (GetUserRequest) returns (UserOut);
+	rpc ListCustomer (ListUserRequest) returns (PagUserOut);
+	rpc ResetPassword (ResetPasswordRequest) returns (NilOut);
+	rpc ChangePassword (ChangePasswordRequest) returns (NilOut);
+	rpc Login (LoginRequest) returns (LoginOut);
+
+}
+
+message CreateUserRequest {
+	string username = 1;
+	string password = 2;
+	bool is_active = 3;
+	bool is_staff = 4;
+	uint32 role_id = 5;
+}
+
+message UpdateUserRequest {
+	string username = 1;
+	bool is_active = 3;
+	bool is_staff = 4;
+	uint32 role_id = 5;
+	uint32 pk = 6;
+}
+
+message DeleteUserRequest {
+	uint32 pk = 1;
+}
+
+message GetUserRequest {
+	uint32 pk = 1;
+}
+
+message ListUserRequest {
+	int64 page = 1;
+	int64 size = 2;
+	uint32 pk = 3;
+	string pks = 4;
+	string before_created_at = 5;
+	string after_created_at = 6;
+	string before_updated_at = 7;
+	string after_updated_at = 8;
+	string username = 9;
+	BoolValue is_active = 10;
+	BoolValue is_staff = 11;
+	uint32 role_id = 12;
+}
+
+message LoginRequest {
+	string username = 1;
+	string password = 2;
+}
+
+message UserOut {
+	uint32 id = 1;
+	string created_at = 2;
+	string updated_at = 3;
+	string username = 4;
+	bool is_active = 5;
+	bool is_staff = 6;
+	RoleOutBase role = 7;
+}
+
+message PagUserOut {
+	int64 page = 1;
+	int64 size = 2;
+	int64 total = 3;
+	int64 pages = 4;
+	repeated UserOut items = 5;
+}
+
+message ResetPasswordRequest {
+	uint32 pk = 1;
+	string password = 2;
+}
+
+message ChangePasswordRequest {
+	string old_password = 1;
+	string new_password = 2;
+	string confirm_password = 3;
+}
+
+message LoginOut {
+	string token = 1;
+}
