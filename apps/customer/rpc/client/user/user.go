@@ -7,7 +7,7 @@ package user
 import (
 	"context"
 
-	"go-dango/apps/customer/rpc/pb"
+	"gz-dango/apps/customer/rpc/pb"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

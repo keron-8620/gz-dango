@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"go-dango/pkg/database"
+	"gz-dango/pkg/database"
 )
 
 type LoginRecordModel struct {

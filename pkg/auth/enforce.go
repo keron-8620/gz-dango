@@ -6,7 +6,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/golang-jwt/jwt/v5"
 
-	"go-dango/pkg/errors"
+	"gz-dango/pkg/errors"
 )
 
 const (

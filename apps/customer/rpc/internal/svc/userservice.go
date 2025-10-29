@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"go-dango/apps/customer/rpc/internal/models"
-	"go-dango/pkg/database"
-	"go-dango/pkg/errors"
+	"gz-dango/apps/customer/rpc/internal/models"
+	"gz-dango/pkg/database"
+	"gz-dango/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"

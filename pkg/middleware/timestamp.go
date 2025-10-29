@@ -10,41 +10,26 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"go-dango/pkg/errors"
-)
-
-var (
-	RsonNoTimestamp = errors.ReasonEnum{
-		Reason: "no_timestamp",
-		Msg:    "请求标头中缺少时间戳",
-	}
-	RsonInvalidTimestamp = errors.ReasonEnum{
-		Reason: "invalid_timestamp",
-		Msg:    "无效的时间戳",
-	}
-	RsonTimestampExpired = errors.ReasonEnum{
-		Reason: "timestamp_expired",
-		Msg:    "时间戳已过期, 请检查客户端时间同步",
-	}
+	"gz-dango/pkg/errors"
 )
 
 var (
 	ErrNoTimestamp = errors.New(
 		http.StatusBadRequest,
-		RsonNoTimestamp.Reason,
-		RsonNoTimestamp.Msg,
+		"no_timestamp",
+		"请求标头中缺少时间戳",
 		nil,
 	)
 	ErrInvalidTimestamp = errors.New(
 		http.StatusBadRequest,
-		RsonInvalidTimestamp.Reason,
-		RsonInvalidTimestamp.Msg,
+		"invalid_timestamp",
+		"无效的时间戳",
 		nil,
 	)
 	ErrTimestampExpired = errors.New(
 		http.StatusBadRequest,
-		RsonTimestampExpired.Reason,
-		RsonTimestampExpired.Msg,
+		"timestamp_expired",
+		"时间戳已过期, 请检查客户端时间同步",
 		nil,
 	)
 )

@@ -9,7 +9,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"go-dango/pkg/errors"
+
+	"gz-dango/pkg/errors"
 )
 
 // ErrorMiddleware 异常处理中间件

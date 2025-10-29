@@ -1,4 +1,4 @@
-module go-dango
+module gz-dango
 
 go 1.25.3
 

@@ -3,11 +3,11 @@ package userlogic
 import (
 	"context"
 
-	"go-dango/apps/customer/rpc/internal/svc"
-	"go-dango/apps/customer/rpc/pb"
-	"go-dango/pkg/auth"
-	"go-dango/pkg/database"
-	"go-dango/pkg/errors"
+	"gz-dango/apps/customer/rpc/internal/svc"
+	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
+	"gz-dango/pkg/database"
+	"gz-dango/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

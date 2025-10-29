@@ -1,6 +1,6 @@
 package models
 
-import "go-dango/pkg/database"
+import "gz-dango/pkg/database"
 
 type ButtonModel struct {
 	database.StandardModel

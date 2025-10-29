@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"go-dango/pkg/errors"
+	"gz-dango/pkg/errors"
 )
 
 var (

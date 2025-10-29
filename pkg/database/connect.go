@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"go-dango/pkg/database/driver/opengauss"
+	"gz-dango/pkg/database/driver/opengauss"
 )
 
 // NewGormConfig 创建 gorm 配置

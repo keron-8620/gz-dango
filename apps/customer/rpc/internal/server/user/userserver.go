@@ -7,9 +7,9 @@ package server
 import (
 	"context"
 
-	"go-dango/apps/customer/rpc/internal/logic/user"
-	"go-dango/apps/customer/rpc/internal/svc"
-	"go-dango/apps/customer/rpc/pb"
+	"gz-dango/apps/customer/rpc/internal/logic/user"
+	"gz-dango/apps/customer/rpc/internal/svc"
+	"gz-dango/apps/customer/rpc/pb"
 )
 
 type UserServer struct {

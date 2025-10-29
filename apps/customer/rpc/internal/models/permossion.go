@@ -1,7 +1,7 @@
 package models
 
 import (
-	"go-dango/pkg/database"
+	"gz-dango/pkg/database"
 )
 
 type PermissionModel struct {

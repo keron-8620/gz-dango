@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"go-dango/pkg/database"
+	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

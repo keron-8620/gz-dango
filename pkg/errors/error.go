@@ -1,16 +1,14 @@
 package errors
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"maps"
+	"net/http"
 )
 
-const (
-	unknownCode   = 500
-	unknownReason = "unknown"
-	unknownMsg    = "未知错误"
-)
+const ErrKey = "error"
 
 type Error struct {
 	Code   int            `json:"code"`
@@ -87,12 +85,44 @@ func Clone(err *Error) *Error {
 	}
 }
 
+const (
+	unknownCode   = http.StatusInternalServerError
+	unknownReason = "unknown"
+	unknownMsg    = "未知错误"
+
+	ctxCancelCode   = http.StatusBadRequest
+	ctxCancelReason = "ctx_cancel"
+	ctxCancelMsg    = "请求取消"
+
+	ctxDeadlineCode   = http.StatusRequestTimeout
+	ctxDeadlineReason = "ctx_deadline"
+	ctxDeadlineMsg    = "请求超时"
+)
+
 func FromError(err error) *Error {
 	if err == nil {
 		return nil
 	}
 	if se := new(Error); errors.As(err, &se) {
 		return se
+	}
+	if errors.Is(err, context.Canceled) {
+		return &Error{
+			Code:   ctxCancelCode,
+			Reason: ctxCancelReason,
+			Msg:    ctxCancelMsg,
+			Data:   nil,
+			cause:  err,
+		}
+	}
+	if errors.Is(err, context.DeadlineExceeded) {
+		return &Error{
+			Code:   ctxDeadlineCode,
+			Reason: ctxDeadlineReason,
+			Msg:    ctxDeadlineMsg,
+			Data:   nil,
+			cause:  err,
+		}
 	}
 	return &Error{
 		Code:   unknownCode,

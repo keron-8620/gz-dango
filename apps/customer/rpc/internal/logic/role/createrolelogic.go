@@ -3,11 +3,11 @@ package rolelogic
 import (
 	"context"
 
-	"go-dango/apps/customer/rpc/internal/converter"
-	"go-dango/apps/customer/rpc/internal/models"
-	"go-dango/apps/customer/rpc/internal/svc"
-	"go-dango/apps/customer/rpc/pb"
-	"go-dango/pkg/database"
+	"gz-dango/apps/customer/rpc/internal/converter"
+	"gz-dango/apps/customer/rpc/internal/models"
+	"gz-dango/apps/customer/rpc/internal/svc"
+	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

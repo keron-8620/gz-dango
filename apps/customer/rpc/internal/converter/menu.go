@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"go-dango/apps/customer/rpc/internal/models"
-	"go-dango/apps/customer/rpc/pb"
+	"gz-dango/apps/customer/rpc/internal/models"
+	"gz-dango/apps/customer/rpc/pb"
 )
 
 func MenuModelToOutBase(

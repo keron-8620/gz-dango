@@ -1,9 +1,9 @@
 package svc
 
 import (
-	"go-dango/apps/customer/rpc/internal/config"
-	"go-dango/pkg/auth"
-	"go-dango/pkg/crypto"
+	"gz-dango/apps/customer/rpc/internal/config"
+	"gz-dango/pkg/auth"
+	"gz-dango/pkg/crypto"
 
 	"gorm.io/gorm"
 )

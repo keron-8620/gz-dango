@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/json"
 
-	"go-dango/pkg/database"
+	"gz-dango/pkg/database"
 )
 
 type Meta struct {

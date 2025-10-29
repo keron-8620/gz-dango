@@ -3,31 +3,20 @@ package rolelogic
 import (
 	"net/http"
 
-	"go-dango/pkg/errors"
-)
-
-var (
-	RsonAddRolePolicy = errors.ReasonEnum{
-		Reason: "add_role_policy_failed",
-		Msg:    "添加角色策略失败",
-	}
-	RsonRemoveRolePolicy = errors.ReasonEnum{
-		Reason: "remove_role_policy_failed",
-		Msg:    "删除角色策略失败",
-	}
+	"gz-dango/pkg/errors"
 )
 
 var (
 	ErrAddRolePolicy = errors.New(
 		http.StatusInternalServerError,
-		RsonAddRolePolicy.Reason,
-		RsonAddRolePolicy.Msg,
+		"add_role_policy_failed",
+		"添加角色策略失败",
 		nil,
 	)
 	ErrRemoveRolePolicy = errors.New(
 		http.StatusInternalServerError,
-		RsonRemoveRolePolicy.Reason,
-		RsonRemoveRolePolicy.Msg,
+		"remove_role_policy_failed",
+		"删除角色策略失败",
 		nil,
 	)
 )
