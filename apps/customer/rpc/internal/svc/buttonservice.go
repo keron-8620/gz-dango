@@ -36,6 +36,7 @@ func (s *ButtonService) CreateModel(ctx context.Context, m *models.ButtonModel) 
 	if err := database.DBCreate(ctx, s.gormDB, &models.ButtonModel{}, m); err != nil {
 		logx.WithContext(ctx).Errorw(
 			"新增按钮模型失败",
+			logx.Field("id", m.Id),
 			logx.Field("name", m.Name),
 			logx.Field("arrange_order", m.ArrangeOrder),
 			logx.Field("is_active", m.IsActive),

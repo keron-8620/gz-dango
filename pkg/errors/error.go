@@ -85,20 +85,6 @@ func Clone(err *Error) *Error {
 	}
 }
 
-const (
-	unknownCode   = http.StatusInternalServerError
-	unknownReason = "unknown"
-	unknownMsg    = "未知错误"
-
-	ctxCancelCode   = http.StatusBadRequest
-	ctxCancelReason = "ctx_cancel"
-	ctxCancelMsg    = "请求取消"
-
-	ctxDeadlineCode   = http.StatusRequestTimeout
-	ctxDeadlineReason = "ctx_deadline"
-	ctxDeadlineMsg    = "请求超时"
-)
-
 func FromError(err error) *Error {
 	if err == nil {
 		return nil
@@ -108,26 +94,26 @@ func FromError(err error) *Error {
 	}
 	if errors.Is(err, context.Canceled) {
 		return &Error{
-			Code:   ctxCancelCode,
-			Reason: ctxCancelReason,
-			Msg:    ctxCancelMsg,
+			Code:   http.StatusBadRequest,
+			Reason: "ctx_cancel",
+			Msg:    "请求取消",
 			Data:   nil,
 			cause:  err,
 		}
 	}
 	if errors.Is(err, context.DeadlineExceeded) {
 		return &Error{
-			Code:   ctxDeadlineCode,
-			Reason: ctxDeadlineReason,
-			Msg:    ctxDeadlineMsg,
+			Code:   http.StatusRequestTimeout,
+			Reason: "ctx_deadline",
+			Msg:    "请求超时",
 			Data:   nil,
 			cause:  err,
 		}
 	}
 	return &Error{
-		Code:   unknownCode,
-		Reason: unknownReason,
-		Msg:    unknownMsg,
+		Code:   http.StatusInternalServerError,
+		Reason: "unknown",
+		Msg:    "未知错误",
 		Data:   nil,
 		cause:  err,
 	}
