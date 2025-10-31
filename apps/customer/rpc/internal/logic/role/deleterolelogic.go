@@ -5,6 +5,7 @@ import (
 
 	"gz-dango/apps/customer/rpc/internal/svc"
 	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,6 +36,9 @@ func (l *DeleteRoleLogic) DeleteRole(in *pb.DeleteRoleRequest) (*pb.NilOut, erro
 	}
 	if err := l.svcCtx.Role.RemoveGroupPolicy(l.ctx, *m); err != nil {
 		return nil, ErrRemoveRolePolicy.WithCause(err)
+	}
+	if err := l.svcCtx.NotifyPolicyChange(); err != nil {
+		return nil, auth.ErrCasbinSyncFailed.WithCause(err)
 	}
 	return &pb.NilOut{}, nil
 }

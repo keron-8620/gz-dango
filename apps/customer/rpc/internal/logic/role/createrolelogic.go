@@ -7,6 +7,7 @@ import (
 	"gz-dango/apps/customer/rpc/internal/models"
 	"gz-dango/apps/customer/rpc/internal/svc"
 	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -52,6 +53,9 @@ func (l *CreateRoleLogic) CreateRole(in *pb.CreateRoleRequest) (*pb.RoleOut, err
 	}
 	if err := l.svcCtx.Role.AddGroupPolicy(l.ctx, m); err != nil {
 		return nil, ErrAddRolePolicy.WithCause(err)
+	}
+	if err := l.svcCtx.NotifyPolicyChange(); err != nil {
+		return nil, auth.ErrCasbinSyncFailed.WithCause(err)
 	}
 	return converter.RoleModelToOut(m), nil
 }

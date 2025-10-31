@@ -5,6 +5,7 @@ import (
 
 	"gz-dango/apps/customer/rpc/internal/svc"
 	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,6 +36,9 @@ func (l *DeleteMenuLogic) DeleteMenu(in *pb.DeleteMenuRequest) (*pb.NilOut, erro
 	}
 	if err := l.svcCtx.Menu.RemoveGroupPolicy(l.ctx, *m, true); err != nil {
 		return nil, ErrRemoveMenuPolicy.WithCause(err)
+	}
+	if err := l.svcCtx.NotifyPolicyChange(); err != nil {
+		return nil, auth.ErrCasbinSyncFailed.WithCause(err)
 	}
 	return &pb.NilOut{}, nil
 }

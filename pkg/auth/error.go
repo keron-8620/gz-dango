@@ -61,4 +61,10 @@ var (
 		"设置用户信息失败",
 		nil,
 	)
+	ErrCasbinSyncFailed = errors.New(
+		http.StatusInternalServerError,
+		"casbin_sync_failed",
+		"发送casbin同步策略信号失败",
+		nil,
+	)
 )

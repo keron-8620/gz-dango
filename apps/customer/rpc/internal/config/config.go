@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -13,4 +15,11 @@ type Config struct {
 	LogConf   logx.LogConf
 	CacheConf cache.NodeConf
 	DBConf    database.DBConf
+	AuthConf  AuthConfig
+}
+
+type AuthConfig struct {
+	JwtSecret         string
+	PolicyLoadTimeout time.Duration
+	PolicyChangeKey   string
 }

@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 	"time"
+
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 // BlacklistManager 定义令牌黑名单管理接口
@@ -107,4 +109,90 @@ func (m *MemoryBlacklist) Contains(ctx context.Context, token string) (bool, err
 		return true, nil
 	}
 	return false, nil
+}
+
+// RedisBlacklist 使用Redis作为后端存储实现BlacklistManager接口
+// 提供分布式黑名单管理，支持超时和上下文处理
+// 适用于需要共享黑名单状态的多实例应用
+type RedisBlacklist struct {
+	client  *redis.Redis  // Redis客户端实例
+	prefix  string        // 黑名单条目的键前缀
+	timeout time.Duration // 操作超时时间
+}
+
+// NewRedisBlacklist 创建一个新的RedisBlacklist实例
+// client: Redis客户端实例
+// prefix: 令牌的可选键前缀（如果为空则默认使用DefaultPrefix）
+// timeout: 操作超时时间（如果<=0则默认使用DefaultRedisTimeout）
+func NewRedisBlacklist(client *redis.Redis, prefix string, timeout time.Duration) *RedisBlacklist {
+	if prefix == "" {
+		prefix = DefaultPrefix
+	}
+	if timeout <= 0 {
+		timeout = time.Duration(5) * time.Second
+	}
+	return &RedisBlacklist{
+		client:  client,
+		prefix:  prefix,
+		timeout: timeout,
+	}
+}
+
+// Add 将令牌添加到Redis黑名单中，duration为过期时间
+// 使用Redis SET命令设置过期时间（类似SETEX行为）
+// 实现上下文取消和超时处理
+func (r *RedisBlacklist) Add(ctx context.Context, token string, seconds int) error {
+	// 检查上下文是否已被取消
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+	}
+
+	key := r.prefix + token
+	// 为操作应用超时
+	ctx, cancel := context.WithTimeout(ctx, r.timeout)
+	defer cancel()
+
+	return r.client.SetexCtx(ctx, key, "1", seconds)
+}
+
+// Remove 从Redis黑名单中移除令牌
+// 使用Redis DEL命令删除键
+// 此操作是幂等的 - 删除不存在的令牌不会导致错误
+// 实现上下文取消和超时处理
+func (r *RedisBlacklist) Remove(ctx context.Context, token string) error {
+	// 检查上下文是否已被取消
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+	}
+
+	key := r.prefix + token
+	// 为操作应用超时
+	ctx, cancel := context.WithTimeout(ctx, r.timeout)
+	defer cancel()
+
+	_, err := r.client.DelCtx(ctx, key)
+	return err
+}
+
+// Contains 检查令牌是否存在于Redis黑名单中
+// 使用Redis EXISTS命令检查键是否存在
+// 实现上下文取消和超时处理
+func (r *RedisBlacklist) Contains(ctx context.Context, token string) (bool, error) {
+	// 检查上下文是否已被取消
+	select {
+	case <-ctx.Done():
+		return false, ctx.Err()
+	default:
+	}
+
+	key := r.prefix + token
+	// 为操作应用超时
+	ctx, cancel := context.WithTimeout(ctx, r.timeout)
+	defer cancel()
+
+	return r.client.ExistsCtx(ctx, key)
 }

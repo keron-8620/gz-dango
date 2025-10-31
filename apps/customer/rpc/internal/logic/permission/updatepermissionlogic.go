@@ -7,6 +7,7 @@ import (
 	"gz-dango/apps/customer/rpc/internal/converter"
 	"gz-dango/apps/customer/rpc/internal/svc"
 	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -48,6 +49,9 @@ func (l *UpdatePermissionLogic) UpdatePermission(in *pb.UpdatePermissionRequest)
 	}
 	if err := l.svcCtx.Perm.AddPolicy(l.ctx, *m); err != nil {
 		return nil, ErrAddPermissionPolicy.WithCause(err)
+	}
+	if err := l.svcCtx.NotifyPolicyChange(); err != nil {
+		return nil, auth.ErrCasbinSyncFailed.WithCause(err)
 	}
 	return converter.PermModelToOutBase(*m), nil
 }

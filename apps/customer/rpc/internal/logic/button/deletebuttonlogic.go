@@ -5,6 +5,7 @@ import (
 
 	"gz-dango/apps/customer/rpc/internal/svc"
 	"gz-dango/apps/customer/rpc/pb"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,6 +36,9 @@ func (l *DeleteButtonLogic) DeleteButton(in *pb.DeleteButtonRequest) (*pb.NilOut
 	}
 	if err := l.svcCtx.Button.RemoveGroupPolicy(l.ctx, *m, true); err != nil {
 		return nil, ErrRemoveButtonPolicy.WithCause(err)
+	}
+	if err := l.svcCtx.NotifyPolicyChange(); err != nil {
+		return nil, auth.ErrCasbinSyncFailed.WithCause(err)
 	}
 	return &pb.NilOut{}, nil
 }
