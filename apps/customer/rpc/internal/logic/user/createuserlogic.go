@@ -31,7 +31,7 @@ func (l *CreateUserLogic) CreateUser(in *pb.CreateUserRequest) (*pb.UserOut, err
 	if t := GetPasswordStrength(in.Password); t < StrengthStrong {
 		return nil, ErrPasswordStrengthFailed
 	}
-	password, err := l.svcCtx.Hasher.Hash(in.Password)
+	password, err := hasher.Hash(in.Password)
 	if err != nil {
 		return nil, ErrPasswordHashError.WithCause(err)
 	}

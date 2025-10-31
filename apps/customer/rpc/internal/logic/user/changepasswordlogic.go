@@ -43,11 +43,11 @@ func (l *ChangePasswordLogic) ChangePassword(in *pb.ChangePasswordRequest) (*pb.
 	if err != nil {
 		return nil, database.NewGormError(err, nil)
 	}
-	ok, err := l.svcCtx.Hasher.Verify(in.OldPassword, m.Password)
+	ok, err := hasher.Verify(in.OldPassword, m.Password)
 	if err != nil || !ok {
 		return nil, ErrPasswordMismatch
 	}
-	password, err := l.svcCtx.Hasher.Hash(in.NewPassword)
+	password, err := hasher.Hash(in.NewPassword)
 	if err != nil {
 		return nil, ErrPasswordHashError.WithCause(err)
 	}

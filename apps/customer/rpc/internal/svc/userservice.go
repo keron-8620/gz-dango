@@ -48,7 +48,7 @@ func (s *UserService) CreateModel(ctx context.Context, m *models.UserModel) erro
 
 func (s *UserService) UpdateModel(ctx context.Context, data map[string]any, conds ...any) error {
 	if err := database.DBUpdate(ctx, s.gormDB, &models.UserModel{}, data, nil, conds...); err != nil {
-		fields := mapToLogFields(data)
+		fields := database.MapToLogFields(data)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("更新用户模型失败", fields...)
 		return err
@@ -92,7 +92,7 @@ func (s *UserService) ListModel(
 	var ms []models.UserModel
 	count, err := database.DBList(ctx, s.gormDB, &models.UserModel{}, &ms, qp)
 	if err != nil {
-		fields := qpToLogFields(qp)
+		fields := database.QPToLogFields(qp)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("查询用户列表失败", fields...)
 		return 0, nil, err
@@ -100,12 +100,12 @@ func (s *UserService) ListModel(
 	return count, ms, err
 }
 
-func (s *UserService) AddToBlacklist(ctx context.Context, token string, duration time.Duration) error {
-	if err := s.cache.AddToBlacklist(token, duration); err != nil {
+func (s *UserService) AddToBlacklist(ctx context.Context, token string, seconds int) error {
+	if err := s.cache.AddToBlacklist(ctx, token, seconds); err != nil {
 		logx.WithContext(ctx).Errorw(
 			"添加token黑名单失败",
 			logx.Field("token", token),
-			logx.Field("duration", duration),
+			logx.Field("seconds", seconds),
 			logx.Field(errors.ErrKey, err),
 		)
 		return err

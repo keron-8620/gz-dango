@@ -74,7 +74,7 @@ func (s *RecordService) ListModel(
 	var ms []models.LoginRecordModel
 	count, err := database.DBList(ctx, s.gormDB, &models.LoginRecordModel{}, &ms, qp)
 	if err != nil {
-		fields := qpToLogFields(qp)
+		fields := database.QPToLogFields(qp)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("查询用户登录记录列表失败", fields...)
 		return 0, nil, err

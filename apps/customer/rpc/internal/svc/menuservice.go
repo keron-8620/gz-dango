@@ -58,7 +58,7 @@ func (s *MenuService) CreateModel(ctx context.Context, m *models.MenuModel) erro
 
 func (s *MenuService) UpdateModel(ctx context.Context, data map[string]any, upmap map[string]any, conds ...any) error {
 	if err := database.DBUpdate(ctx, s.gormDB, &models.MenuModel{}, data, upmap, conds...); err != nil {
-		fields := mapToLogFields(data)
+		fields := database.MapToLogFields(data)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("更新菜单模型失败", fields...)
 		return err
@@ -103,7 +103,7 @@ func (s *MenuService) ListModel(
 	var ms []models.MenuModel
 	count, err := database.DBList(ctx, s.gormDB, &models.MenuModel{}, &ms, qp)
 	if err != nil {
-		fields := qpToLogFields(qp)
+		fields := database.QPToLogFields(qp)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("查询菜单列表失败", fields...)
 		return 0, nil, err
@@ -121,6 +121,27 @@ func (s *MenuService) ListModelByIds(
 	qp := database.NewPksQueryParams(ids)
 	_, ms, err := s.ListModel(ctx, qp)
 	return ms, err
+}
+
+func (s *MenuService) LoadPolicies(ctx context.Context) error {
+	qp := database.QueryParams{
+		Preloads: []string{"Parent", "Permissions"},
+		Query:    nil,
+		OrderBy:  nil,
+		Limit:    0,
+		Offset:   0,
+		IsCount:  false,
+	}
+	_, ms, err := s.ListModel(ctx, qp)
+	if err != nil {
+		return err
+	}
+	for _, m := range ms {
+		if err := s.AddGroupPolicy(ctx, m); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *MenuService) AddGroupPolicy(

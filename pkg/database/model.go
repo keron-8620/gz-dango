@@ -14,13 +14,3 @@ type StandardModel struct {
 	CreatedAt time.Time `gorm:"column:create_at;comment:创建时间" json:"create_at"`
 	UpdatedAt time.Time `gorm:"column:update_at;comment:修改时间" json:"update_at"`
 }
-
-func (m *StandardModel) CreateSetTime() {
-	now := time.Now()
-	m.CreatedAt = now
-	m.UpdatedAt = now
-}
-
-func (m *StandardModel) UpdateSetTime() {
-	m.UpdatedAt = time.Now()
-}

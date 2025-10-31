@@ -2,6 +2,8 @@ package userlogic
 
 import (
 	"unicode"
+
+	"gz-dango/pkg/crypto"
 )
 
 // Strength 等级常量
@@ -89,3 +91,5 @@ func GetPasswordStrength(password string) int {
 		return StrengthVeryStrong
 	}
 }
+
+var hasher = crypto.NewBcryptHasher(12)

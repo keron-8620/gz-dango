@@ -47,7 +47,7 @@ func (s *RoleService) CreateModel(ctx context.Context, m *models.RoleModel) erro
 
 func (s *RoleService) UpdateModel(ctx context.Context, data map[string]any, upmap map[string]any, conds ...any) error {
 	if err := database.DBUpdate(ctx, s.gormDB, &models.RoleModel{}, data, upmap, conds...); err != nil {
-		fields := mapToLogFields(data)
+		fields := database.MapToLogFields(data)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("更新角色模型失败", fields...)
 		return err
@@ -91,7 +91,7 @@ func (s *RoleService) ListModel(
 	var ms []models.RoleModel
 	count, err := database.DBList(ctx, s.gormDB, &models.RoleModel{}, &ms, qp)
 	if err != nil {
-		fields := qpToLogFields(qp)
+		fields := database.QPToLogFields(qp)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("查询角色列表失败", fields...)
 		return 0, nil, err
@@ -99,8 +99,25 @@ func (s *RoleService) ListModel(
 	return count, ms, err
 }
 
-func (s *RoleService) RoleModelToSub(m models.RoleModel) string {
-	return fmt.Sprintf("role_%d", m.Id)
+func (s *RoleService) LoadPolicies(ctx context.Context) error {
+	qp := database.QueryParams{
+		Preloads: []string{"Permissions", "Menus", "Buttons"},
+		Query:    nil,
+		OrderBy:  nil,
+		Limit:    0,
+		Offset:   0,
+		IsCount:  false,
+	}
+	_, ms, err := s.ListModel(ctx, qp)
+	if err != nil {
+		return err
+	}
+	for _, m := range ms {
+		if err := s.AddGroupPolicy(ctx, m); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *RoleService) AddGroupPolicy(
@@ -184,4 +201,8 @@ func (s *RoleService) RemoveGroupPolicy(
 		return err
 	}
 	return nil
+}
+
+func (s *RoleService) RoleModelToSub(m models.RoleModel) string {
+	return fmt.Sprintf("role_%d", m.Id)
 }

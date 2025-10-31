@@ -29,7 +29,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordRequest) (*pb.Nil
 	if t := GetPasswordStrength(in.Password); t < StrengthStrong {
 		return nil, ErrPasswordStrengthFailed
 	}
-	password, err := l.svcCtx.Hasher.Hash(in.Password)
+	password, err := hasher.Hash(in.Password)
 	if err != nil {
 		return nil, ErrPasswordHashError.WithCause(err)
 	}

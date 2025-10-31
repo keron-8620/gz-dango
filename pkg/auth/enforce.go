@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"context"
 	goerrors "errors"
-	"time"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -43,9 +43,9 @@ func (a *AuthEnforcer) SetBlacklist(manager BlacklistManager) {
 	a.blacklist = manager
 }
 
-func (a *AuthEnforcer) AddToBlacklist(token string, duration time.Duration) error {
+func (a *AuthEnforcer) AddToBlacklist(ctx context.Context, token string, seconds int) error {
 	if a.blacklist != nil {
-		return a.blacklist.AddToBlacklist(token, 24*time.Hour)
+		return a.blacklist.Add(ctx, token, seconds)
 	}
 	return nil
 }
@@ -53,10 +53,10 @@ func (a *AuthEnforcer) AddToBlacklist(token string, duration time.Duration) erro
 // Authentication 验证给定令牌的有效性并返回相应的用户认证信息
 // token：待验证的JWT令牌字符串
 // 返回用户认证信息和可能发生的错误（如无效令牌、已过期等）
-func (c *AuthEnforcer) Authentication(token string) (*UserClaims, *errors.Error) {
+func (c *AuthEnforcer) Authentication(ctx context.Context, token string) (*UserClaims, *errors.Error) {
 	// 检查黑名单
 	if c.blacklist != nil {
-		blacklisted, err := c.blacklist.IsBlacklisted(token)
+		blacklisted, err := c.blacklist.Contains(ctx, token)
 		if err != nil {
 			return nil, errors.FromError(err)
 		}

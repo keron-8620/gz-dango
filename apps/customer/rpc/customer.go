@@ -40,7 +40,14 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
-	defer s.Stop()
+	defer func() {
+		ctx.Close()
+		s.Stop()
+	}()
+
+	if err := ctx.RefreshPolicies(); err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

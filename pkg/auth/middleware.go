@@ -51,8 +51,9 @@ func AuthMiddleware(enforcer *AuthEnforcer) func(http.HandlerFunc) http.HandlerF
 				httpx.WriteJson(w, ErrNoAuthor.Code, ErrNoAuthor.Reply())
 				return
 			}
+			ctx := r.Context()
 			// 身份认证
-			info, err := enforcer.Authentication(token)
+			info, err := enforcer.Authentication(ctx, token)
 			if err != nil {
 				httpx.WriteJson(w, err.Code, err.Reply())
 				return
@@ -69,9 +70,9 @@ func AuthMiddleware(enforcer *AuthEnforcer) func(http.HandlerFunc) http.HandlerF
 			}
 
 			// 将用户信息存储到 context 中
-			ctx := SetUserClaims(r.Context(), info)
+			nctx := SetUserClaims(ctx, info)
 			// 创建一个新的请求，使用更新后的 context
-			newReq := r.WithContext(ctx)
+			newReq := r.WithContext(nctx)
 
 			next.ServeHTTP(w, newReq)
 		}

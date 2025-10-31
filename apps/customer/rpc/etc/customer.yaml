@@ -4,3 +4,20 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: customer.rpc
+Cache:
+  Host: 127.0.0.1:6379
+  Type: node
+Database:
+  Type: "opengauss"
+  Dns: "host=192.168.11.113 port=5432 user=judgement password=Quant360 dbname=pydango sslmode=disable"
+  MaxOpenConns: 10
+  MaxIdleConns: 10
+  ConnMaxLifetime: 60
+Log:
+  Mode: file
+  Path: logs/customer.log
+  Level: info
+  Compress: true      # 启用日志压缩
+  KeepDays: 7         # 保留日志天数
+  MaxSize: 100        # 每个日志文件最大大小(MB)
+  MaxBackups: 5       # 最大备份文件数

@@ -50,7 +50,7 @@ func (s *PermissionService) CreateModel(ctx context.Context, m *models.Permissio
 
 func (s *PermissionService) UpdateModel(ctx context.Context, data map[string]any, conds ...any) error {
 	if err := database.DBUpdate(ctx, s.gormDB, &models.PermissionModel{}, data, nil, conds...); err != nil {
-		fields := mapToLogFields(data)
+		fields := database.MapToLogFields(data)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("更新权限模型失败", fields...)
 		return err
@@ -94,7 +94,7 @@ func (s *PermissionService) ListModel(
 	var ms []models.PermissionModel
 	count, err := database.DBList(ctx, s.gormDB, &models.PermissionModel{}, &ms, qp)
 	if err != nil {
-		fields := qpToLogFields(qp)
+		fields := database.QPToLogFields(qp)
 		fields = append(fields, logx.Field(errors.ErrKey, err))
 		logx.WithContext(ctx).Errorw("查询权限列表失败", fields...)
 		return 0, nil, err
@@ -112,6 +112,27 @@ func (s *PermissionService) ListModelByIds(
 	qp := database.NewPksQueryParams(ids)
 	_, ms, err := s.ListModel(ctx, qp)
 	return ms, err
+}
+
+func (s *PermissionService) LoadPolicies(ctx context.Context) error {
+	qp := database.QueryParams{
+		Preloads: []string{},
+		Query:    nil,
+		OrderBy:  nil,
+		Limit:    0,
+		Offset:   0,
+		IsCount:  false,
+	}
+	_, ms, err := s.ListModel(ctx, qp)
+	if err != nil {
+		return err
+	}
+	for _, m := range ms {
+		if err := s.AddPolicy(ctx, m); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *PermissionService) AddPolicy(

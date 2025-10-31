@@ -1,6 +1,8 @@
 package models
 
-import "gz-dango/pkg/database"
+import (
+	"gz-dango/pkg/database"
+)
 
 type UserModel struct {
 	database.StandardModel
