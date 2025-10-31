@@ -13,6 +13,12 @@ var (
 		"请求头中缺少授权令牌",
 		nil,
 	)
+	ErrTokenRevoked = errors.New(
+		http.StatusUnauthorized,
+		"token_revoked",
+		"令牌被撤销",
+		nil,
+	)
 	ErrInvalidToken = errors.New(
 		http.StatusUnauthorized,
 		"invalid_token",

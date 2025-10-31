@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gz-dango/apps/customer/rpc/internal/models"
+	"gz-dango/pkg/auth"
 	"gz-dango/pkg/database"
 	"gz-dango/pkg/errors"
 
@@ -14,13 +15,16 @@ import (
 
 type UserService struct {
 	gormDB *gorm.DB
+	cache  *auth.AuthEnforcer
 }
 
 func NewUserService(
 	gormDB *gorm.DB,
+	cache *auth.AuthEnforcer,
 ) *UserService {
 	return &UserService{
 		gormDB: gormDB,
+		cache:  cache,
 	}
 }
 
@@ -94,4 +98,17 @@ func (s *UserService) ListModel(
 		return 0, nil, err
 	}
 	return count, ms, err
+}
+
+func (s *UserService) AddToBlacklist(ctx context.Context, token string, duration time.Duration) error {
+	if err := s.cache.AddToBlacklist(token, duration); err != nil {
+		logx.WithContext(ctx).Errorw(
+			"添加token黑名单失败",
+			logx.Field("token", token),
+			logx.Field("duration", duration),
+			logx.Field(errors.ErrKey, err),
+		)
+		return err
+	}
+	return nil
 }
