@@ -11,6 +11,6 @@ type BaseModel struct {
 type StandardModel struct {
 	BaseModel
 
-	CreatedAt time.Time `gorm:"column:create_at;comment:创建时间" json:"create_at"`
-	UpdatedAt time.Time `gorm:"column:update_at;comment:修改时间" json:"update_at"`
+	CreatedAt time.Time `gorm:"column:created_at;comment:创建时间;autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;comment:修改时间;autoUpdateTime" json:"updated_at"`
 }

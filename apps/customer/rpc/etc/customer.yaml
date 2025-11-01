@@ -8,16 +8,27 @@ Cache:
   Host: 127.0.0.1:6379
   Type: node
 Database:
-  Type: "opengauss"
-  Dns: "host=192.168.11.113 port=5432 user=judgement password=Quant360 dbname=pydango sslmode=disable"
+  Type: "mysql"
+  Dns: "root:yourpassword@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
   MaxOpenConns: 10
   MaxIdleConns: 10
   ConnMaxLifetime: 60
-Log:
+  ConnMaxIdleTime: 10
+ServiceLog:
   Mode: file
-  Path: logs/customer.log
+  Path: logs
   Level: info
   Compress: true      # 启用日志压缩
   KeepDays: 7         # 保留日志天数
   MaxSize: 100        # 每个日志文件最大大小(MB)
   MaxBackups: 5       # 最大备份文件数
+Security:
+  JwtSecret: "your-jwt-secret-key-here"
+  PolicyLoadTimeout: 5s
+  PolicyChangeKey: "policy_change_key"
+  JwtBlacklistPrefix: "jwt_blacklist:"
+  CheckTimestamp: true
+  TimestampRange: 300
+  TokenExpireMinutes: 1440
+  LoginFailMaxTimes: 5
+  PasswordStrength: 3

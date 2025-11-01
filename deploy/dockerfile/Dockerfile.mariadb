@@ -1,0 +1,44 @@
+FROM alpine:latest
+
+# 维护者信息
+LABEL maintainer="keion"
+
+# 安装 mariadb
+RUN apk update && \
+    apk add --no-cache mariadb mariadb-client && \
+    rm -rf /var/cache/apk/*
+
+# 创建 mysql 用户和数据目录
+RUN mkdir -p /run/mysqld /var/lib/mysql && \
+    chown -R mysql:mysql /run/mysqld /var/lib/mysql
+
+# 创建基础配置文件
+RUN mkdir -p /etc/my.cnf.d && \
+    echo "[mysqld]" > /etc/my.cnf && \
+    echo "skip-host-cache" >> /etc/my.cnf && \
+    echo "skip-name-resolve" >> /etc/my.cnf && \
+    echo "datadir=/var/lib/mysql" >> /etc/my.cnf && \
+    echo "socket=/run/mysqld/mysqld.sock" >> /etc/my.cnf && \
+    echo "log-error=/var/lib/mysql/error.log" >> /etc/my.cnf && \
+    echo "pid-file=/run/mysqld/mysqld.pid" >> /etc/my.cnf && \
+    echo "bind-address = 0.0.0.0" >> /etc/my.cnf
+
+# 暴露 mariadb 默认端口
+EXPOSE 3306
+
+# 设置数据卷
+VOLUME /var/lib/mysql
+
+# 简化的 entrypoint 脚本
+RUN echo '#!/bin/sh' > /usr/local/bin/docker-entrypoint.sh && \
+    echo 'mkdir -p /var/lib/mysql' >> /usr/local/bin/docker-entrypoint.sh && \
+    echo 'chown -R mysql:mysql /var/lib/mysql' >> /usr/local/bin/docker-entrypoint.sh && \
+    echo 'if [ ! -d "/var/lib/mysql/mysql" ]; then' >> /usr/local/bin/docker-entrypoint.sh && \
+    echo '  mysql_install_db --user=mysql --datadir=/var/lib/mysql --skip-test-db' >> /usr/local/bin/docker-entrypoint.sh && \
+    echo 'fi' >> /usr/local/bin/docker-entrypoint.sh && \
+    echo 'exec "$@"' >> /usr/local/bin/docker-entrypoint.sh
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["mysqld", "--user=mysql"]

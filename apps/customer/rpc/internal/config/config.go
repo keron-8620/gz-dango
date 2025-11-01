@@ -6,20 +6,26 @@ import (
 	"gz-dango/pkg/database"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	LogConf   logx.LogConf
-	CacheConf cache.NodeConf
-	DBConf    database.DBConf
-	AuthConf  AuthConfig
+	ServiceLog logx.LogConf
+	Database   database.DBConf
+	Cache      redis.RedisConf
+	Security   SecurityConfig
 }
 
-type AuthConfig struct {
-	JwtSecret         string
-	PolicyLoadTimeout time.Duration
-	PolicyChangeKey   string
+type SecurityConfig struct {
+	JwtSecret          string
+	PolicyLoadTimeout  time.Duration
+	PolicyChangeKey    string
+	JwtBlacklistPrefix string
+	CheckTimestamp     bool
+	TimestampRange     int
+	TokenExpireMinutes int
+	LoginFailMaxTimes  int
+	PasswordStrength   int
 }

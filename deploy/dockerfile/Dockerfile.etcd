@@ -1,0 +1,49 @@
+# etcd Dockerfile
+FROM alpine:latest
+
+# 维护者信息
+LABEL maintainer="keion"
+
+# 安装必要的工具
+RUN apk update && \
+    apk add --no-cache curl tar
+
+# 设置变量
+ENV ETCD_VER=v3.5.0
+ENV DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
+
+# 下载并安装 etcd
+RUN curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd.tar.gz && \
+    tar xzvf /tmp/etcd.tar.gz -C /tmp && \
+    mv /tmp/etcd-${ETCD_VER}-linux-amd64/etcd* /usr/local/bin/ && \
+    rm -rf /tmp/* && \
+    chmod +x /usr/local/bin/etcd*
+
+# 创建 etcd 用户
+RUN addgroup -S -g 1001 etcd && \
+    adduser -S -u 1001 -G etcd etcd
+
+# 创建数据目录
+RUN mkdir -p /var/lib/etcd && \
+    chown -R etcd:etcd /var/lib/etcd
+
+# 暴露 etcd 端口
+EXPOSE 2379 2380
+
+# 设置数据卷
+VOLUME /var/lib/etcd
+
+# 切换到 etcd 用户
+USER etcd
+
+# 启动 etcd
+ENTRYPOINT ["etcd"]
+CMD ["--name=etcd0", \
+     "--data-dir=/var/lib/etcd", \
+     "--advertise-client-urls=http://0.0.0.0:2379", \
+     "--listen-client-urls=http://0.0.0.0:2379", \
+     "--initial-advertise-peer-urls=http://0.0.0.0:2380", \
+     "--listen-peer-urls=http://0.0.0.0:2380", \
+     "--initial-cluster-token=etcd-cluster-1", \
+     "--initial-cluster=etcd0=http://0.0.0.0:2380", \
+     "--initial-cluster-state=new"]

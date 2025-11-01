@@ -1,0 +1,27 @@
+# Redis Dockerfile
+FROM alpine:latest
+
+# 维护者信息
+LABEL maintainer="keion"
+
+# 更新包索引并安装 redis
+RUN apk update && \
+    apk add --no-cache redis && \
+    mkdir -p /var/lib/redis && \
+    chown redis:redis /var/lib/redis
+
+# 创建 redis 数据目录
+VOLUME /var/lib/redis
+
+# 创建自定义配置文件
+RUN echo "protected-mode no" >> /etc/redis.conf
+RUN echo "bind 0.0.0.0" >> /etc/redis.conf
+
+# 暴露 redis 默认端口
+EXPOSE 6379
+
+# 使用 redis 用户运行
+USER redis
+
+# 启动 redis 服务器
+CMD ["redis-server", "/etc/redis.conf"]
